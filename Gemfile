@@ -14,6 +14,7 @@ end
 group :development do
   # Use sqlite3 as the database for Active Record
   gem 'sqlite3'
+  gem 'pry-rails'
 end
 
 # Use Puma as the app server
