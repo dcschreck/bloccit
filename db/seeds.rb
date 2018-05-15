@@ -17,6 +17,7 @@ posts = Post.all
 end
 
 Post.find_or_create_by(title: "The most newest title", body: "The most newest body")
+Comment.find_or_create_by(post: posts, body:" The most newest comment body")
 
 puts "Seed finished"
 puts "#{Post.count} posts created"
