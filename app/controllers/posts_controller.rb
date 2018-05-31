@@ -1,7 +1,5 @@
 class PostsController < ApplicationController
-
     before_action :require_sign_in, except: :show
-    before_action :authorize_user, except: [:show, :new, :create]
 
     def show
         @post = Post.find(params[:id])
@@ -31,7 +29,13 @@ class PostsController < ApplicationController
     end
 
     def edit
-        @post = Post.find(params[:id])
+        post = Post.find(params[:id])
+        if current_user == post.user || current_user.admin? || current_user.moderator?
+            @post = Post.find(params[:id])
+        else
+            flash[:alert] = "You must be an admin or moderator to do that."
+            redirect_to [post.topic, post]
+        end
     end
 
     def update
@@ -50,13 +54,19 @@ class PostsController < ApplicationController
     end
 
     def destroy
-        @post = Post.find(params[:id])
-        if @post.destroy
-            flash[:notice] = "\"#{@post.title}\" was deleted sucessfully."
-            redirect_to @post.topic
+        post = Post.find(params[:id])
+        if current_user == post.user || current_user.admin?
+            @post = Post.find(params[:id])
+            if @post.destroy
+                flash[:notice] = "\"#{@post.title}\" was deleted sucessfully."
+                redirect_to @post.topic
+            else
+                flash.now[:alert] = "There was an error deleting the post."
+                render :show
+            end
         else
-            flash.now[:alert] = "There was an error deleting the post."
-            render :show
+            flash[:alert] = "You must be an admin to do that."
+            redirect_to [post.topic, post]
         end
     end
 
@@ -64,13 +74,4 @@ class PostsController < ApplicationController
     def post_params
         params.require(:post).permit(:title, :body)
     end
-
-    def authorize_user
-        post = Post.find(params[:id])
-
-        unless current_user == post.user || current_user.admin?
-            flash[:alert] = "You must be an admin to do that."
-            redirect_to [post.topic, post]
-        end
-    end 
 end
