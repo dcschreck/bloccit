@@ -6,7 +6,7 @@ RSpec.describe CommentsController, type: :controller do
     let(:my_user) { create(:user) }
     let(:other_user) { create(:user) }
     let(:my_post) { create(:post, topic: my_topic, user: my_user) }
-    let(:my_comment) { Comment.create!(body: 'Comment Body', post: my_post, user: my_user) }
+    let(:my_comment) { create(:comment, post: my_post, user: my_user) }
 
     context "guest" do
         describe "POST create" do
@@ -31,11 +31,11 @@ RSpec.describe CommentsController, type: :controller do
 
         describe "POST create" do
             it "increases the number of comments by 1" do
-                expect{ post :create, params: { post_id: my_post.id, comment: {body: RandomData.random_sentence} } }.to change(Comment,:count).by(1)
+                expect{ post :create, params: { post_id: my_post.id, comment: {body: RandomData.random_paragraph} } }.to change(Comment,:count).by(1)
             end
 
             it "redirects to the post show view" do
-                post :create, params: { post_id: my_post.id, comment: {body: RandomData.random_sentence} }
+                post :create, params: { post_id: my_post.id, comment: {body: RandomData.random_paragraph} }
                 expect(response).to redirect_to([my_topic, my_post])
             end
         end
