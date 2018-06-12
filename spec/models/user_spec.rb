@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
     let(:user) { create(:user) }
+    let(:comment) { create(:comment) }
 
     it { is_expected.to have_many(:posts) }
     it { is_expected.to have_many(:comments) }
@@ -103,6 +104,28 @@ RSpec.describe User, type: :model do
         it "returns the proper Gravatar url for a known email entity" do
             expected_gravatar = "http://gravatar.com/avatar/bb6d1172212c180cfbdb7039129d7b03.png?s=48"
             expect(known_user.avatar_url(48)).to eq(expected_gravatar)
+        end
+    end
+
+    describe "users show view for favorites" do
+        let(:other_user) { create(:user, email: "blochead@bloc.io") }
+        let(:other_user_post) { create(:post, user: other_user) }
+
+        it "returns the proper Gravatar url for author of favorited post" do
+            expected_gravatar = "http://gravatar.com/avatar/bb6d1172212c180cfbdb7039129d7b03.png?s=48"
+            expect(other_user.avatar_url(48)).to eq(expected_gravatar)
+        end
+
+        it "shows the number of comments made on favorited post" do
+            vote_number = other_user_post.votes.count
+            3.times { other_user_post.votes.create!(value: 1, user: user) }
+            expect(other_user_post.votes.count).to eq(vote_number + 3)
+        end
+
+        it "shows the number of votes made on favorited post" do
+            comment_number = other_user_post.comments.count
+            2.times { other_user_post.comments.create!(body: RandomData.random_paragraph, user: user) }
+            expect(other_user_post.comments.count).to eq(comment_number + 2)
         end
     end
 end
