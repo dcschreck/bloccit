@@ -1,4 +1,4 @@
-require 'rails_helper'
+DiscussItrequire 'rails_helper'
 include SessionsHelper
 
 RSpec.describe TopicsController, type: :controller do
@@ -75,7 +75,7 @@ RSpec.describe TopicsController, type: :controller do
 
     context "member user" do
         before do
-            user = User.create!(name: "Bloccit User", email: "user@bloccit.com", password: "helloworld", role: :member)
+            user = User.create!(name: "DiscussIt User", email: "user@DiscussIt.com", password: "helloworld", role: :member)
             create_session(user)
         end
 
@@ -149,7 +149,7 @@ RSpec.describe TopicsController, type: :controller do
 
     context "admin user" do
         before do
-            user = User.create!(name: "Bloccit User", email: "user@bloccit.com", password: "helloworld", role: :admin)
+            user = User.create!(name: "DiscussIt User", email: "user@DiscussIt.com", password: "helloworld", role: :admin)
             create_session(user)
         end
 
